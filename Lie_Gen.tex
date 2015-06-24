@@ -1,0 +1,415 @@
+%%% ====================================================================
+\documentclass[fleqn,italian]{article}
+\pagestyle{headings}
+
+\title{Calcolo dei generatori di SO(3) e SU(2)} 
+\author{Francesco Pedull\`a} 
+\date{Versione 0.9, 2011/05/20}
+
+\usepackage{amsmath,amsthm}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{amssymb,gensymb,mathrsfs,tensor,babel}
+
+
+%    Some definitions useful in producing this sort of documentation:
+\chardef\bslash=`\\ % p. 424, TeXbook
+%    Normalized (nonbold, nonitalic) tt font, to avoid font
+%    substitution warning messages if tt is used inside section
+%    headings and other places where odd font combinations might
+%    result.
+\newcommand{\ntt}{\normalfont\ttfamily}
+%    command name
+\newcommand{\cn}[1]{{\protect\ntt\bslash#1}}
+%    LaTeX package name
+\newcommand{\pkg}[1]{{\protect\ntt#1}}
+%    File name
+\newcommand{\fn}[1]{{\protect\ntt#1}}
+%    environment name
+\newcommand{\env}[1]{{\protect\ntt#1}}
+\hfuzz1pc % Don't bother to report overfull boxes if overage is < 1pc
+
+%       Theorem environments
+
+%% \theoremstyle{plain} %% This is the default
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{ax}{Axiom}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+\newtheorem*{notation}{Notation}
+
+%\numberwithin{equation}{section}
+
+\newcommand{\thmref}[1]{Theorem~\ref{#1}}
+\newcommand{\secref}[1]{\S\ref{#1}}
+\newcommand{\lemref}[1]{Lemma~\ref{#1}}
+
+\newcommand{\bysame}{\mbox{\rule{3em}{.4pt}}\,}
+
+%       Math definitions
+
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\st}{\sigma}
+\newcommand{\XcY}{{(X,Y)}}
+\newcommand{\SX}{{S_X}}
+\newcommand{\SY}{{S_Y}}
+\newcommand{\SXY}{{S_{X,Y}}}
+\newcommand{\SXgYy}{{S_{X|Y}(y)}}
+\newcommand{\Cw}[1]{{\hat C_#1(X|Y)}}
+\newcommand{\G}{{G(X|Y)}}
+\newcommand{\PY}{{P_{\mathcal{Y}}}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\wt}{\widetilde}
+\newcommand{\wh}{\widehat}
+
+\DeclareMathOperator{\per}{per}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\non}{non}
+\DeclareMathOperator{\cf}{cf}
+\DeclareMathOperator{\add}{add}
+\DeclareMathOperator{\Cham}{Cham}
+\DeclareMathOperator{\IM}{Im}
+\DeclareMathOperator{\esssup}{ess\,sup}
+\DeclareMathOperator{\meas}{meas}
+\DeclareMathOperator{\seg}{seg}
+
+\newcommand{\AMS}{American Mathematical Society}
+\def\latex/{{\protect\LaTeX}}
+\def\latexe/{{\protect\LaTeXe}}
+\def\amslatex/{{\protect\AmS-\protect\LaTeX}}
+\def\tex/{{\protect\TeX}}
+\def\amstex/{{\protect\AmS-\protect\TeX}}
+
+\newcommand{\pd}[2]{\frac{\partial{#1}}{\partial{#2}}}
+\newcommand{\pdt}[2]{\frac{\partial^2{#1}}{\partial{#2}^2}}
+\newcommand{\ppd}[2]{\left(\frac{\partial{#1}}{\partial{#2}}\right)}
+\newcommand{\ppdt}[2]{\left(\frac{\partial^2{#1}}{\partial{#2}^2}\right)}
+
+\newcommand{\dd}{\mathrm{d}}
+
+\theoremstyle{plain}% default
+%\newtheorem{thm}{Teorema}[section]
+\newtheorem{axi}[thm]{Postulato}
+%\newtheorem{lem}[thm]{Lemma}
+%\newtheorem{prop}[thm]{Proposizione}
+%\newtheorem*{cor}{Corollario}
+
+\theoremstyle{definition}
+%\newtheorem{defn}{Definizione}[section]
+\newtheorem{conj}{Congettura}[section]
+\newtheorem{exmp}{Esempio}[section]
+
+\theoremstyle{remark}
+%\newtheorem*{rem}{Osservazione}
+\newtheorem*{note}{Nota}
+
+\DeclareMathOperator{\Immag}{Im}
+\DeclareMathOperator{\Real}{Re}
+\DeclareMathOperator{\Div}{div}
+\DeclareMathOperator{\Erg}{erg}
+\DeclareMathOperator{\Sec}{sec}
+\DeclareMathOperator{\Cost}{cost}
+\DeclareMathOperator{\Ind}{Ind}
+
+\newsavebox{\fmbox}
+\newenvironment{fmpage}[1]
+   {\begin{lrbox}{\fmbox}\begin{minipage}{#1}}
+   {\end{minipage}\end{lrbox}\fbox{\usebox{\fmbox}}}
+
+%\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+
+%%\numberwithin{section}{section}
+\numberwithin{equation}{section}
+\numberwithin{thm}{section}
+
+%    \interval is used to provide better spacing after a [ that
+%    is used as a closing delimiter.
+\newcommand{\interval}[1]{\mathinner{#1}}
+
+%    Notation for an expression evaluated at a particular condition. The
+%    optional argument can be used to override automatic sizing of the
+%    right vert bar, e.g. \eval[\biggr]{...}_{...}
+\newcommand{\eval}[2][\right]{\relax
+  \ifx#1\right\relax \left.\fi#2#1\rvert}
+
+%    Enclose the argument in vert-bar delimiters:
+\newcommand{\envert}[1]{\left\lvert#1\right\rvert}
+\let\abs=\envert
+
+%    Enclose the argument in double-vert-bar delimiters:
+\newcommand{\enVert}[1]{\left\lVert#1\right\rVert}
+\let\norm=\enVert
+
+\begin{document}
+\maketitle
+\markboth{Sample paper for the {\protect\ntt\lowercase{amsmath}} package}
+{Generatori di SO(3) e SU(2)}
+\renewcommand{\sectionmark}[1]{}
+
+\section{Introduzione}
+
+Questo testo presenta in dettaglio il calcolo dei generatori infinitesimali 
+dei gruppi di Lie $SO(3)$ e $SU(2)$. I simboli utilizzati ed i numeri delle 
+equazioni si riferiscono al testo di Morton Hamermesh {\em Group Theory 
+and its Application to Physical Problems}, pubblicato nel 1962. 
+
+\section{Definizioni e notazione}
+
+La definizione di operatore infinitesimale del gruppo [eq.(8-46)] \`e:
+\begin{equation}
+X_k=\sum^n_{i=1}u_{ik}(x)\pd{}{x_i}
+\end{equation}
+avendo definito in precedenza [eq. (8-39)]:
+\begin{equation}
+u_{ik}=\Biggl[\pd{f_i(x_1,\dots,x_n;a_1,\dots,a_r)}{a_k}\Biggr]_{a=0}.
+\end{equation}
+Notiamo che questa definizione \`e quella normalmente utilizzata nei
+testi di matematica. Per le applicazioni fisiche si preferisce aggiungere
+un coefficiente $-i$ che rende hermitiani anche gli operatori 
+antisimmetrici reali associati alle rotazioni. Nel seguito del testo
+restiamo allineati alla definizione di Hamermesh. Useremo per\`o la
+seguente notazione, pi\`u compatta, in cui i vettori sono rappresentati
+come vettori colonna, adottando inoltre la convenzione di usare lettere
+minuscole per i vettori e maiuscole per le matrici. La trasformazione di
+coordinate risulta espressa dalle $n$ equazioni
+\begin{equation}
+f(x;a)=\begin{pmatrix} f_1\\ . \\ . \\ f_n\end{pmatrix}
+\end{equation}
+dove gli argomenti delle funzioni $f_i$ sono le $n$ coordinate $x_i$ e gli
+$m$ parametri (angoli) $a_i$:
+\begin{equation}
+v=\begin{pmatrix} x_1\\ . \\ . \\ x_n\end{pmatrix} 
+\end{equation}
+\begin{equation}
+a=\begin{pmatrix} a_1\\ . \\ . \\ a_m\end{pmatrix}.
+\end{equation}
+Con questa notazione la definizione dei generatori pu\`o essere riscritta
+in forma compatta (riunendo le due definizioni) 
+\begin{equation}
+X=(\nabla_a f^T\vert_{a=0})\nabla_x
+\end{equation}
+dove $\nabla_a$ indica l'operatore di derivazione rispetto ai parametri $a$,
+$\nabla_x$ l'operatore di derivazione rispetto alle coordinate $x$. Notiamo
+esplicitamente che il prodotto di un vettore riga per un vettore colonna 
+indica il relativo prodotto tensoriale, che rappresentiamo con una matrice.
+
+\section{Calcolo dei generatori di SO(3)}
+
+Nel caso dello spazio $\mathbb{R}^3$, la trasformazione ortogonale
+SO(3) pu\`o essere definita tramite il prodotto di tre matrici di 
+rotazione attorno ai tre assi ortogonali $x,y,z$. Se poniamo il 
+vettore dei parametri $a=(\theta,\phi,\psi)^T$, le matrici sono:
+\begin{equation}
+R_\theta(\theta)=\begin{pmatrix} \cos(\theta) & \sin(\theta) & 0 \\
+                                -\sin(\theta) & \cos(\theta) & 0 \\
+                                       0      &       0      & 1 \\
+                 \end{pmatrix}
+\end{equation}
+\begin{equation}
+R_\phi(\phi)=\begin{pmatrix} \cos(\phi) & -\sin(\phi) & 0 \\
+                                 0      &     1       & 0 \\
+                             \sin(\phi) & \cos(\phi)  & 0 \\
+                 \end{pmatrix}
+\end{equation}
+\begin{equation}
+R_\psi(\psi)=\begin{pmatrix} 1  &      0      &      0     \\
+                             0  & \cos(\psi)  & \sin(\psi) \\
+                             0  & -\sin(\psi) & \cos(\psi) \\
+                 \end{pmatrix}
+\end{equation}
+e la funzione di trasformazione di coordinate $x'=U(a)x$ vale 
+\begin{equation}
+U(\theta,\phi,\psi)=R_\theta(\theta)R_\phi(\phi)R_\psi(\psi)x
+\end{equation}
+avendo posto $v=(x,y,z)^T$. Notiamo che i segni degli elementi di
+matrice sono tali da ottenere rotazioni destrorse positive. Tale scelta
+\`e arbitraria ma deve essere consistente se si vogliono ottenere risultati
+direttamente confrontabili con gli operatori di rotazione che si trovano in
+letteratura.
+Procediamo ora al calcolo delle righe della matrice
+\begin{equation}
+\nabla_a f^T\vert_{a=0}=\begin{pmatrix} \partial_\theta f^T \\
+                             \partial_\phi f^T \\
+                             \partial_\psi f^T \\
+             \end{pmatrix}_{a=0}
+\end{equation}
+avendo indicato con $\partial_a$ la derivata parziale rispetto ad $a$. Per
+effettuare tale calcolo osserviamo che, nel derivare rispetto ad un 
+qualunque angolo $a_i$, le matrici associate agli altri angoli rimangono 
+costanti e vengono valutate nell'origine, per cui coincidono con l'unit\`a. 
+Allora:
+\begin{equation}
+\begin{split}
+\partial_\theta f^T\vert_{a=0} &=\partial_\theta(Uv)^T\vert_{a=0} \\
+          &= \partial_\theta(v^T R_\psi^T R_\phi^T R_\theta^T)\vert_{a=0} \\
+          &= v^T \partial_\theta R_\theta^T\vert_{a=0} \\
+          &= (x,y,z) \begin{pmatrix}  
+                          -\sin(\theta) & \cos(\theta) & 0 \\
+                          -\cos(\theta) & -\sin(\theta) & 1 \\
+                           0 & 0 & 0 \\ \end{pmatrix}_{a=0} \\
+          &= (x,y,z) \begin{pmatrix} 
+                          0 & 1 & 0 \\-1 & 0 & 0 \\ 0 & 0 & 0 \\
+                          \end{pmatrix} \\
+          &= (-y,x,0)
+\end{split}
+\end{equation}
+e analogamente
+\begin{equation}
+\begin{split}
+\partial_\phi f^T\vert_{a=0} &= v^T \partial_\phi R_\phi^T\vert_{a=0} \\
+          &= (x,y,z) \begin{pmatrix}  
+                 \cos(\phi) & 0 & -\sin(\phi) \\
+                      0     & 1 & 0 \\
+                 \sin(\phi) & 0 & \cos(\phi) \\ \end{pmatrix}_{a=0} \\
+          &= (x,y,z) \begin{pmatrix} 
+                          0 & 0 & -1 \\ 0 & 0 & 0 \\ 1 & 0 & 0 \\
+                          \end{pmatrix} \\
+          &= (z,0,-x).
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+\partial_\psi f^T\vert_{a=0} &= v^T \partial_\psi R_\psi^T\vert_{a=0} \\
+          &= (x,y,z) \begin{pmatrix}  
+                   0 &      0      & 0 \\
+                   0 & -\sin(\psi) & \cos(\psi) \\
+                   0 & -\cos(\psi) & \sin(\psi) \\ \end{pmatrix}_{a=0} \\
+          &= (x,y,z) \begin{pmatrix} 
+                          0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & -1 & 0 \\
+                          \end{pmatrix} \\
+          &= (0,-z,y).
+\end{split}
+\end{equation}
+Raccogliendo i vettori nella matrice $\nabla_a f^T\vert_a$ e moltiplicando
+per $\nabla_x$ si ottiene che gli operatori $X$ valgono
+\begin{equation}
+X=\begin{pmatrix} 0 & -z & y \\ z & 0 & -x \\ -y & x & 0 \\ \end{pmatrix}
+      \begin{pmatrix} \partial_x \\ \partial_y \\ \partial_z \\ \end{pmatrix}
+      = \begin{pmatrix} -z\partial_y+y\partial_z \\ 
+                        z\partial_x-x\partial_z \\ 
+			-y\partial_x+x\partial_y \\ \end{pmatrix}.
+\end{equation}
+Come atteso, coincidono (a meno di una costante moltiplicativa) con gli 
+operatori di momento angolare.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=60mm]{axis.eps}
+\end{center}
+\end{figure}
+
+\section{Calcolo dei generatori di SU(2)}
+
+Nel caso dello spazio $\mathbb{C}^2$, la trasformazione ortogonale
+SU(2) pu\`o essere definita dal prodotto di una matrice hermitiana
+e unitaria $U$ per il vettore delle coordinate da trasformare 
+\begin{equation}
+v=\begin{pmatrix} z_1 \\ z_2 \\ \end{pmatrix}.
+\end{equation}
+Cio\`e, $U$ deve soddisfare le seguenti condizioni:
+\begin{equation}
+U U^\dagger = I
+\end{equation}
+\begin{equation}
+\det(U)=1.
+\end{equation}
+\`E facile verificare che la matrice
+\begin{equation}
+U=\begin{pmatrix} \alpha & -\overline{\beta} \\ \beta & \overline{\alpha}
+  \end{pmatrix}
+\end{equation}
+le soddisfa entrambe. Infatti
+\begin{equation}
+\begin{split}
+U U^\dagger 
+   & = \begin{pmatrix} \alpha & -\overline{\beta} \\ 
+                  \beta   &  \overline{\alpha} \\ \end{pmatrix}
+     \begin{pmatrix} \overline{\alpha} & \overline{\beta} \\ 
+               -\beta   &  \alpha \\ \end{pmatrix} \\
+   & = \begin{pmatrix} \alpha\overline{\alpha}+\beta\overline{\beta} &
+                \alpha\overline{\beta}-\overline{\beta}\alpha \\
+                \beta\overline{\alpha}-\overline{\alpha}\beta & 
+                \beta\overline{\beta}+\overline{\alpha}\alpha \\
+                \end{pmatrix} \\
+   & = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ \end{pmatrix}
+\end{split}
+\end{equation}
+dove nell'ultimo passaggio abbiamo imposto la condizione che 
+\begin{equation}
+det(U)=|\alpha|^2+|\beta|^2=1.
+\end{equation}
+Dal momento che il numero di parametri reali liberi che abbiamo \`e 8
+(i 4 numeri complessi in $U$) ed abbiamo 5 equazioni (4+1 scritte sopra), ci
+aspettiamo che rimangano 3 parametri reali indipendenti. In analogia
+con il caso reale indichiamo con $a=(\theta,\phi,\psi)^T$ tali parametri. 
+Quindi possiamo porre
+\begin{equation}
+\begin{split}
+\alpha & = \sin\theta e^{i\phi} \\
+\beta  & = \cos\theta e^{i\psi}
+\end{split}
+\end{equation}
+ed \`e facile verificare che, con queste definizioni, $U$ rispetta tutte le 
+condizioni imposte. Possiamo scrivere $U$ e $U^T$:
+\begin{equation}
+U=\begin{pmatrix} \sin\theta e^{i\phi} & -\cos\theta e^{-i\psi} \\
+                  \cos\theta e^{i\psi} & \sin\theta e^{-i\phi} \\
+  \end{pmatrix}
+\end{equation}
+\begin{equation}
+U^T=\begin{pmatrix} \sin\theta e^{i\phi} & \cos\theta e^{i\psi} \\
+                    -\cos\theta e^{-i\psi} & \sin\theta e^{-i\phi} .
+  \end{pmatrix}.
+\end{equation}
+Al fine di calcolare gli operatori a partire dalla definizione, abbiamo 
+bisogno della matrice $\nabla_a U^T$ per ogni parametro del vettore
+ $a$. Infatti, dalla definizione abbiamo:
+\begin{equation}
+\nabla_a f^T=\nabla_a v^T U^T=v^T\nabla_a U^T.
+\end{equation}
+Il calcolo diretto di tali matrici ci d\`a:
+\begin{equation}
+\begin{split}
+\partial_\theta U^T|_{a=0} & =
+        \begin{pmatrix} \cos\theta e^{i\phi} & -\sin\theta e^{i\psi} \\
+                  \sin\theta e^{-i\psi} & \cos\theta e^{-i\phi} \\
+        \end{pmatrix}_{a=0} & = &
+        \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ \end{pmatrix} \\
+\partial_\phi U^T|_{a=0} & =
+        \begin{pmatrix} i\sin\theta e^{i\phi} & \cos\theta e^{i\psi} \\
+                  -\cos\theta e^{-i\psi} & -i\sin\theta e^{-i\phi} \\
+        \end{pmatrix}_{a=0} & = &
+        \begin{pmatrix} 0 & 1 \\ -1 & 0 \\ \end{pmatrix} \\
+\partial_\psi U^T|_{a=0} & =
+        \begin{pmatrix} \sin\theta e^{i\phi} & i\cos\theta e^{i\psi} \\
+                  -i\sin\theta e^{-i\psi} & \sin\theta e^{-i\phi} \\
+        \end{pmatrix}_{a=0} & = &
+        \begin{pmatrix} 0 & i \\ -i & 0 \\ \end{pmatrix} .
+\end{split}
+\end{equation}
+che coincidono con le matrici di Dirac a meno dello scambio delle colonne
+(che dipende solo dalla definizione di $\alpha$ e $\beta$).
+Completiamo il calcolo degli operatori:
+\begin{equation}
+\begin{split}
+X_\theta & = v^T\partial_\theta U^T & = & (z_1,z_2)
+    \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} & = & (z_1,z_2) \\
+X_\phi & = v^T\partial_\phi U^T & = & (z_1,z_2)
+    \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} & = & (-z_2,z_1) \\
+X_\psi & = v^T\partial_\psi U^T & = & (z_1,z_2)
+    \begin{pmatrix} 0 & i \\ -i & 0 \end{pmatrix} & = & (-iz_2,iz_1) .
+\end{split}
+\end{equation}
+
+
+
+\end{document}
